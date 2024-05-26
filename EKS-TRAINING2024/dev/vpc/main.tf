@@ -6,6 +6,7 @@ resource "aws_vpc" "eks-training01" {
    Name = "Project EKS"
    Envirnoment = var.envirnoment
    Product = var.product-name
+   "kubernetes.io/cluster/${var.cluster-name}" = "shared"
  }
 }
 
@@ -31,7 +32,9 @@ resource "aws_subnet" "public_subnets" {
  cidr_block = element(var.public_subnet_cidrs, count.index)
  availability_zone = element(var.azs, count.index)
  tags = {
-   Name = "Public_Subnet${count.index + 1}"
+   Name = "Public_Subnet${count.index + 1}",
+   "kubernetes.io/role/elb" = "1",
+   "kubernetes.io/cluster/${var.cluster-name}" = "shared"
  }
 }
 
@@ -64,6 +67,8 @@ resource "aws_subnet" "private_subnets" {
  availability_zone = element(var.azs, count.index)
  tags = {
    Name = "Private_Subnet${count.index + 1}"
+   "kubernetes.io/role/internal-elb" = "1",
+   "kubernetes.io/cluster/${var.cluster-name}" = "shared"
  }
 }
 
